@@ -11,18 +11,14 @@ function Card({ item, onReserve }) {
   // Elegir imagen por defecto segun el tipo de item
   const imgDefecto = item.Categoria ? imgHotel : imgRestaurante
   
-  // Buscar foto de la API (intentar varios campos)
   let fotoAPI = item['Foto 1'] || item['Foto 2'] || item['Foto 3'] || item.Foto || item.Imagen || null
   
-  // Convertir http a https para evitar problemas de mixed content
   if (fotoAPI && fotoAPI.startsWith('http://')) {
     fotoAPI = fotoAPI.replace('http://', 'https://')
   }
   
-  // Si hay foto de API y no ha dado error, usarla. Si no, usar default
   const imagenFinal = (!fotoAPI || imgError) ? imgDefecto : fotoAPI
 
-  // Mostrar precio con euros
   const mostrarPrecio = (precio) => {
     if (!precio) return null
     return '€'.repeat(precio)
