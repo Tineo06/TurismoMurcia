@@ -27,10 +27,26 @@
   color: #1e3a5f;
 }
 
-.card p {
+.card-ubicacion {
   color: #666;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+}
+
+.card-extras {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
   font-size: 0.9rem;
+}
+
+.card-precio {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.card-valoracion {
+  color: #f39c12;
 }
 
 .card button {

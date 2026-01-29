@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, CardElement } from '@stripe/react-stripe-js'
 import './PaymentModal.css'
@@ -14,6 +14,20 @@ function PaymentModal({ item, onClose, onReservaHecha }) {
 
   // Fecha de hoy en formato YYYY-MM-DD
   const hoy = new Date().toISOString().split('T')[0]
+
+  // Obtener coordenadas del item
+  const latitud = item.Latitud ? parseFloat(item.Latitud) : null
+  const longitud = item.Longitud ? parseFloat(item.Longitud) : null
+  
+  // Verificar si las coordenadas son válidas (formato decimal, no UTM)
+  const coordenadasValidas = latitud && longitud && 
+    Math.abs(latitud) <= 90 && Math.abs(longitud) <= 180 &&
+    latitud !== 0 && longitud !== 0
+
+  // URL del mapa estático de OpenStreetMap
+  const mapaUrl = coordenadasValidas 
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitud-0.01},${latitud-0.01},${longitud+0.01},${latitud+0.01}&layer=mapnik&marker=${latitud},${longitud}`
+    : null
 
   function hacerReserva(e) {
     e.preventDefault()
@@ -57,6 +71,23 @@ function PaymentModal({ item, onClose, onReservaHecha }) {
         
         <h2>Reservar en {item.Nombre}</h2>
 
+        {/* Mapa de ubicación */}
+        {mapaUrl && (
+          <div className="mapa-container">
+            <h4>📍 Ubicación</h4>
+            <iframe
+              src={mapaUrl}
+              width="100%"
+              height="200"
+              style={{ border: 'none', borderRadius: '8px' }}
+              title="Ubicación del establecimiento"
+            />
+            <p className="direccion-texto">
+              {item.Dirección && `${item.Dirección}, `}{item.Municipio}
+            </p>
+          </div>
+        )}
+
         {!confirmado ? (
           <Elements stripe={stripePromise}>
             <form onSubmit={hacerReserva}>
@@ -93,7 +124,8 @@ function PaymentModal({ item, onClose, onReservaHecha }) {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group card-field">
+                <label>Tarjeta de pago</label>
                 <CardElement />
               </div>
 

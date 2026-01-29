@@ -22,6 +22,12 @@ function Card({ item, onReserve }) {
   // Si hay foto de API y no ha dado error, usarla. Si no, usar default
   const imagenFinal = (!fotoAPI || imgError) ? imgDefecto : fotoAPI
 
+  // Mostrar precio con euros
+  const mostrarPrecio = (precio) => {
+    if (!precio) return null
+    return '€'.repeat(precio)
+  }
+
   return (
     <div className="card">
       <img 
@@ -31,7 +37,15 @@ function Card({ item, onReserve }) {
       />
       <div className="card-content">
         <h3>{item.Nombre}</h3>
-        <p>{item.Municipio}</p>
+        <p className="card-ubicacion">📍 {item.Municipio}</p>
+        
+        {(item.precio || item.valoracion) && (
+          <div className="card-extras">
+            {item.precio && <span className="card-precio">{mostrarPrecio(item.precio)}</span>}
+            {item.valoracion && <span className="card-valoracion">⭐ {item.valoracion}</span>}
+          </div>
+        )}
+        
         <button onClick={onReserve}>Reservar</button>
       </div>
     </div>

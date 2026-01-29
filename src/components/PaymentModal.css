@@ -15,7 +15,9 @@
   background: white;
   border-radius: 12px;
   width: 90%;
-  max-width: 400px;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
   padding: 2rem;
   position: relative;
 }
@@ -34,6 +36,30 @@
   color: #1e3a5f;
   margin: 0 0 1.5rem 0;
   font-size: 1.2rem;
+}
+
+/* Mapa de ubicación */
+.mapa-container {
+  margin-bottom: 1.5rem;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.mapa-container h4 {
+  margin: 0 0 0.8rem 0;
+  color: #1e3a5f;
+  font-size: 1rem;
+}
+
+.mapa-container iframe {
+  margin-bottom: 0.5rem;
+}
+
+.direccion-texto {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
 }
 
 .form-error {
@@ -58,15 +84,16 @@
   margin-bottom: 0.5rem;
 }
 
-.form-group:last-of-type {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
+.form-group.card-field {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #eee;
 }
 
 .form-group label {
   font-size: 0.9rem;
   color: #333;
+  font-weight: 500;
 }
 
 .form-group input {
