@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, CardElement } from '@stripe/react-stripe-js'
 import './PaymentModal.css'
@@ -10,43 +10,20 @@ function PaymentModal({ item, onClose, onReservaHecha }) {
   const [fecha, setFecha] = useState('')
   const [personas, setPersonas] = useState(1)
   const [confirmado, setConfirmado] = useState(false)
-  const [error, setError] = useState('')
 
-  // Fecha de hoy en formato YYYY-MM-DD
   const hoy = new Date().toISOString().split('T')[0]
 
-  // Obtener coordenadas del item
-  const latitud = item.Latitud ? parseFloat(item.Latitud) : null
-  const longitud = item.Longitud ? parseFloat(item.Longitud) : null
-  
-  // Verificar si las coordenadas son válidas (formato decimal, no UTM)
-  const coordenadasValidas = latitud && longitud && 
-    Math.abs(latitud) <= 90 && Math.abs(longitud) <= 180 &&
-    latitud !== 0 && longitud !== 0
+  const latitud = parseFloat(item.Latitud)
+  const longitud = parseFloat(item.Longitud)
+  const hayMapa = latitud && longitud && Math.abs(latitud) <= 90 && Math.abs(longitud) <= 180
 
-  // URL del mapa estático de OpenStreetMap
-  const mapaUrl = coordenadasValidas 
+  const mapaUrl = hayMapa 
     ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitud-0.01},${latitud-0.01},${longitud+0.01},${latitud+0.01}&layer=mapnik&marker=${latitud},${longitud}`
     : null
 
   function hacerReserva(e) {
     e.preventDefault()
     
-    // Validaciones
-    if (!nombre.trim()) {
-      setError('Escribe tu nombre')
-      return
-    }
-    if (!fecha) {
-      setError('Selecciona una fecha')
-      return
-    }
-    if (fecha < hoy) {
-      setError('La fecha no puede ser anterior a hoy')
-      return
-    }
-    
-    // Crear la reserva
     const reserva = {
       id: Date.now(),
       lugar: item.Nombre,
@@ -55,7 +32,6 @@ function PaymentModal({ item, onClose, onReservaHecha }) {
       personas: personas
     }
     
-    // Guardar en localStorage
     const reservasGuardadas = JSON.parse(localStorage.getItem('reservas') || '[]')
     reservasGuardadas.push(reserva)
     localStorage.setItem('reservas', JSON.stringify(reservasGuardadas))
@@ -71,7 +47,6 @@ function PaymentModal({ item, onClose, onReservaHecha }) {
         
         <h2>Reservar en {item.Nombre}</h2>
 
-        {/* Mapa de ubicación */}
         {mapaUrl && (
           <div className="mapa-container">
             <h4>📍 Ubicación</h4>
@@ -80,48 +55,28 @@ function PaymentModal({ item, onClose, onReservaHecha }) {
               width="100%"
               height="200"
               style={{ border: 'none', borderRadius: '8px' }}
-              title="Ubicación del establecimiento"
+              title="Mapa"
             />
-            <p className="direccion-texto">
-              {item.Dirección && `${item.Dirección}, `}{item.Municipio}
-            </p>
+            <p className="direccion-texto">{item.Municipio}</p>
           </div>
         )}
 
         {!confirmado ? (
           <Elements stripe={stripePromise}>
             <form onSubmit={hacerReserva}>
-              {error && <p className="form-error">{error}</p>}
-              
               <div className="form-group">
                 <label>Nombre</label>
-                <input 
-                  type="text" 
-                  value={nombre} 
-                  onChange={e => setNombre(e.target.value)}
-                  placeholder="Tu nombre"
-                />
+                <input type="text" value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Tu nombre" />
               </div>
 
               <div className="form-group">
                 <label>Fecha</label>
-                <input 
-                  type="date" 
-                  value={fecha} 
-                  onChange={e => setFecha(e.target.value)}
-                  min={hoy}
-                />
+                <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} min={hoy} />
               </div>
 
               <div className="form-group">
                 <label>Personas</label>
-                <input 
-                  type="number" 
-                  value={personas} 
-                  onChange={e => setPersonas(e.target.value)}
-                  min="1"
-                  max="20"
-                />
+                <input type="number" value={personas} onChange={e => setPersonas(e.target.value)} min="1" max="20" />
               </div>
 
               <div className="form-group card-field">

@@ -9,55 +9,43 @@ function Alojamientos() {
   const [reservar, setReservar] = useState(null)
   const [reservas, setReservas] = useState([])
   const [verReservas, setVerReservas] = useState(false)
-  
-  // Filtros
   const [filtroUbicacion, setFiltroUbicacion] = useState('')
   const [filtroCategoria, setFiltroCategoria] = useState('')
   const [filtroPrecio, setFiltroPrecio] = useState('')
   const [filtroValoracion, setFiltroValoracion] = useState('')
-
-  // Lista de municipios únicos
   const [municipios, setMunicipios] = useState([])
 
-  // Cargar datos de la API
   useEffect(() => {
     fetch('https://nexo.carm.es/nexo/archivos/recursos/opendata/json/Hoteles.json')
       .then(res => res.json())
       .then(data => {
-        // Añadir precio y valoración simulados
         const dataConExtras = data.map(item => ({
           ...item,
           precio: Math.floor(Math.random() * 3) + 1,
           valoracion: (Math.random() * 2 + 3).toFixed(1)
         }))
         setHoteles(dataConExtras)
-        
-        // Obtener municipios únicos
         const municipiosUnicos = [...new Set(data.map(h => h.Municipio).filter(m => m))]
         setMunicipios(municipiosUnicos.sort())
       })
   }, [])
 
-  // Cargar reservas guardadas
   useEffect(() => {
     const guardadas = JSON.parse(localStorage.getItem('reservas') || '[]')
     setReservas(guardadas)
   }, [])
 
-  // Actualizar reservas cuando se hace una nueva
   function actualizarReservas() {
     const guardadas = JSON.parse(localStorage.getItem('reservas') || '[]')
     setReservas(guardadas)
   }
 
-  // Borrar una reserva
   function borrarReserva(id) {
     const nuevas = reservas.filter(r => r.id !== id)
     localStorage.setItem('reservas', JSON.stringify(nuevas))
     setReservas(nuevas)
   }
 
-  // Aplicar todos los filtros
   const hotelesFiltrados = hoteles.filter(h => {
     if (busqueda && !h.Nombre.toLowerCase().includes(busqueda.toLowerCase())) return false
     if (filtroUbicacion && h.Municipio !== filtroUbicacion) return false
@@ -71,7 +59,6 @@ function Alojamientos() {
     <div className="page-container">
       <h1>Alojamientos en Murcia</h1>
       
-      {/* Barra de búsqueda y filtros */}
       <div className="filtros-container">
         <input
           type="text"
@@ -82,22 +69,12 @@ function Alojamientos() {
         />
         
         <div className="filtros-grid">
-          <select 
-            value={filtroUbicacion} 
-            onChange={(e) => setFiltroUbicacion(e.target.value)}
-            className="filtro-select"
-          >
+          <select value={filtroUbicacion} onChange={(e) => setFiltroUbicacion(e.target.value)} className="filtro-select">
             <option value="">📍 Todas las ubicaciones</option>
-            {municipios.map(m => (
-              <option key={m} value={m}>{m}</option>
-            ))}
+            {municipios.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
           
-          <select 
-            value={filtroCategoria} 
-            onChange={(e) => setFiltroCategoria(e.target.value)}
-            className="filtro-select"
-          >
+          <select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)} className="filtro-select">
             <option value="">🏨 Todas las categorías</option>
             <option value="Hotel">Hotel</option>
             <option value="Hostal">Hostal</option>
@@ -106,22 +83,14 @@ function Alojamientos() {
             <option value="Casa Rural">Casa Rural</option>
           </select>
           
-          <select 
-            value={filtroPrecio} 
-            onChange={(e) => setFiltroPrecio(e.target.value)}
-            className="filtro-select"
-          >
+          <select value={filtroPrecio} onChange={(e) => setFiltroPrecio(e.target.value)} className="filtro-select">
             <option value="">💰 Todos los precios</option>
             <option value="1">€ - Económico</option>
             <option value="2">€€ - Moderado</option>
             <option value="3">€€€ - Alto</option>
           </select>
           
-          <select 
-            value={filtroValoracion} 
-            onChange={(e) => setFiltroValoracion(e.target.value)}
-            className="filtro-select"
-          >
+          <select value={filtroValoracion} onChange={(e) => setFiltroValoracion(e.target.value)} className="filtro-select">
             <option value="">⭐ Todas las valoraciones</option>
             <option value="4.5">⭐ 4.5+</option>
             <option value="4">⭐ 4.0+</option>
