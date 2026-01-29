@@ -94,7 +94,6 @@ function PaymentModal({ item, onClose, onReservaHecha }) {
               </div>
 
               <div className="form-group">
-                <label>Tarjeta (usa 4242 4242 4242 4242)</label>
                 <CardElement />
               </div>
 
